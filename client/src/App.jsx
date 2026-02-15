@@ -16,6 +16,8 @@ import PostJob from './pages/employer/PostJob'
 import Applicants from './pages/employer/Applicants'
 import AdminStatistics from './pages/admin/AdminStatistics'
 import Dashboard from './pages/Dashboard'
+import Settings from './pages/Settings'
+import Notifications from './pages/Notifications'
 
 const appRouter = createBrowserRouter([
   {
@@ -49,6 +51,14 @@ const appRouter = createBrowserRouter([
   {
     path: "/dashboard",
     element: <Dashboard />
+  },
+  {
+    path: "/settings",
+    element: <Settings />
+  },
+  {
+    path: "/notifications",
+    element: <Notifications />
   },
   // Employer Routes
   {

@@ -1,16 +1,10 @@
 import React, { useState } from 'react'
 import Navbar from '../../components/layout/Navbar'
 import { Link, useNavigate } from 'react-router-dom'
-import axios from 'axios'
-import { JOB_API_END_POINT } from '../../utils/constant'
-import { toast } from 'sonner' // Assuming sonner or react-toastify usage
 import { useDispatch, useSelector } from 'react-redux'
 import { setLoading } from '../../redux/authSlice'
-import { Loader2 } from 'lucide-react'
+import { Loader2, User, Mail, Lock, Eye, EyeOff, UserPlus } from 'lucide-react'
 import api from '../../services/api'
-
-// Note: JOB_API_END_POINT is already in api service, but using direct api instance is better. 
-// I'll stick to using the api service created.
 
 const Signup = () => {
     const [input, setInput] = useState({
@@ -21,6 +15,7 @@ const Signup = () => {
         role: "",
         file: ""
     });
+    const [showPassword, setShowPassword] = useState(false);
     const { loading } = useSelector(store => store.auth);
     const dispatch = useDispatch();
     const navigate = useNavigate();
@@ -31,17 +26,15 @@ const Signup = () => {
     const changeFileHandler = (e) => {
         setInput({ ...input, file: e.target.files?.[0] });
     }
+
     const submitHandler = async (e) => {
         e.preventDefault();
-
-        // Basicvalidation
         if (!input.fullname || !input.email || !input.password || !input.role) {
-            // Toast error here
-            console.error("Missing fields"); // placeholder
+            console.error("Missing fields");
             return;
         }
 
-        const formData = new FormData();    // formData object
+        const formData = new FormData();
         formData.append("name", input.fullname);
         formData.append("email", input.email);
         formData.append("password", input.password);
@@ -57,86 +50,129 @@ const Signup = () => {
             });
             if (res.data.success) {
                 navigate("/login");
-                // toast.success(res.data.message);
             }
         } catch (error) {
             console.log(error);
-            // toast.error(error.response.data.message);
         } finally {
             dispatch(setLoading(false));
         }
     }
+
     return (
-        <div>
+        <div className='min-h-screen bg-gradient-to-br from-gray-50 via-white to-brand-50'>
             <Navbar />
-            <div className='flex items-center justify-center max-w-7xl mx-auto'>
-                <form onSubmit={submitHandler} className='w-1/2 border border-gray-200 rounded-md p-4 my-10'>
-                    <h1 className='font-bold text-xl mb-5 text-center'>Sign Up</h1>
-                    <div className='my-2'>
-                        <label className='font-medium'>Full Name</label>
-                        <input
-                            type="text"
-                            value={input.fullname}
-                            name="fullname"
-                            onChange={changeEventHandler}
-                            placeholder="Full Name"
-                            className='w-full border border-gray-200 rounded p-2 focus:outline-none focus:ring-1 focus:ring-blue-500'
-                        />
-                    </div>
-                    <div className='my-2'>
-                        <label className='font-medium'>Email</label>
-                        <input
-                            type="email"
-                            value={input.email}
-                            name="email"
-                            onChange={changeEventHandler}
-                            placeholder="i.e. example@gmail.com"
-                            className='w-full border border-gray-200 rounded p-2 focus:outline-none focus:ring-1 focus:ring-blue-500'
-                        />
-                    </div>
-                    <div className='my-2'>
-                        <label className='font-medium'>Password</label>
-                        <input
-                            type="password"
-                            value={input.password}
-                            name="password"
-                            onChange={changeEventHandler}
-                            placeholder="Password"
-                            className='w-full border border-gray-200 rounded p-2 focus:outline-none focus:ring-1 focus:ring-blue-500'
-                        />
-                    </div>
-                    <div className='flex items-center justify-between'>
-                        <div className='flex items-center gap-2'>
-                            <div className='flex items-center gap-1'>
-                                <input
-                                    type="radio"
-                                    name="role"
-                                    value="job_seeker"
-                                    checked={input.role === 'job_seeker'}
-                                    onChange={changeEventHandler}
-                                    className="cursor-pointer"
-                                />
-                                <label className='cursor-pointer'>Student</label>
+            <div className='flex items-center justify-center px-4 py-10'>
+                <div className='w-full max-w-md animate-fade-in-up'>
+                    <div className='bg-white rounded-3xl shadow-xl border border-gray-100 p-8 relative overflow-hidden'>
+                        {/* Gradient accent */}
+                        <div className='absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-brand-500 via-blue-500 to-brand-500'></div>
+
+                        {/* Header */}
+                        <div className='text-center mb-7'>
+                            <div className='w-14 h-14 bg-brand-50 rounded-2xl flex items-center justify-center mx-auto mb-4'>
+                                <UserPlus className='text-brand-500' size={24} />
                             </div>
-                            <div className='flex items-center gap-1'>
-                                <input
-                                    type="radio"
-                                    name="role"
-                                    value="employer"
-                                    checked={input.role === 'employer'}
-                                    onChange={changeEventHandler}
-                                    className="cursor-pointer"
-                                />
-                                <label className='cursor-pointer'>Recruiter</label>
-                            </div>
+                            <h1 className='text-2xl font-bold text-gray-800'>Create Account</h1>
+                            <p className='text-gray-400 text-sm mt-1'>Start your journey to your dream job</p>
                         </div>
-                        {/* Profile pic later */}
+
+                        <form onSubmit={submitHandler} className='space-y-4'>
+                            {/* Full Name */}
+                            <div>
+                                <label className='text-sm font-medium text-gray-700 mb-1.5 block'>Full Name</label>
+                                <div className='relative'>
+                                    <User size={18} className='absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400' />
+                                    <input
+                                        type="text"
+                                        value={input.fullname}
+                                        name="fullname"
+                                        onChange={changeEventHandler}
+                                        placeholder="Sumit Sharma"
+                                        className='w-full pl-11 pr-4 py-3 border border-gray-200 rounded-xl text-sm transition-all duration-200 hover:border-gray-300'
+                                    />
+                                </div>
+                            </div>
+
+                            {/* Email */}
+                            <div>
+                                <label className='text-sm font-medium text-gray-700 mb-1.5 block'>Email</label>
+                                <div className='relative'>
+                                    <Mail size={18} className='absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400' />
+                                    <input
+                                        type="email"
+                                        value={input.email}
+                                        name="email"
+                                        onChange={changeEventHandler}
+                                        placeholder="you@example.com"
+                                        className='w-full pl-11 pr-4 py-3 border border-gray-200 rounded-xl text-sm transition-all duration-200 hover:border-gray-300'
+                                    />
+                                </div>
+                            </div>
+
+                            {/* Password */}
+                            <div>
+                                <label className='text-sm font-medium text-gray-700 mb-1.5 block'>Password</label>
+                                <div className='relative'>
+                                    <Lock size={18} className='absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400' />
+                                    <input
+                                        type={showPassword ? "text" : "password"}
+                                        value={input.password}
+                                        name="password"
+                                        onChange={changeEventHandler}
+                                        placeholder="Create a strong password"
+                                        className='w-full pl-11 pr-11 py-3 border border-gray-200 rounded-xl text-sm transition-all duration-200 hover:border-gray-300'
+                                    />
+                                    <button type='button' onClick={() => setShowPassword(!showPassword)} className='absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600'>
+                                        {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                                    </button>
+                                </div>
+                            </div>
+
+                            {/* Role */}
+                            <div>
+                                <label className='text-sm font-medium text-gray-700 mb-3 block'>I am a</label>
+                                <div className='grid grid-cols-2 gap-3'>
+                                    <label className={`flex items-center justify-center gap-2 p-3 rounded-xl border-2 cursor-pointer transition-all duration-200 ${input.role === 'job_seeker' ? 'border-brand-500 bg-brand-50 text-brand-600' : 'border-gray-200 text-gray-500 hover:border-gray-300'}`}>
+                                        <input type="radio" name="role" value="job_seeker" checked={input.role === 'job_seeker'} onChange={changeEventHandler} className="hidden" />
+                                        <span className='text-sm font-medium'>🎓 Job Seeker</span>
+                                    </label>
+                                    <label className={`flex items-center justify-center gap-2 p-3 rounded-xl border-2 cursor-pointer transition-all duration-200 ${input.role === 'employer' ? 'border-brand-500 bg-brand-50 text-brand-600' : 'border-gray-200 text-gray-500 hover:border-gray-300'}`}>
+                                        <input type="radio" name="role" value="employer" checked={input.role === 'employer'} onChange={changeEventHandler} className="hidden" />
+                                        <span className='text-sm font-medium'>💼 Recruiter</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            {/* Profile Photo */}
+                            <div>
+                                <label className='text-sm font-medium text-gray-700 mb-1.5 block'>Profile Photo <span className='text-gray-400 font-normal'>(optional)</span></label>
+                                <div className='relative'>
+                                    <input
+                                        type="file"
+                                        accept="image/*"
+                                        onChange={changeFileHandler}
+                                        className='w-full text-sm file:mr-4 file:py-2.5 file:px-5 file:rounded-xl file:border-0 file:text-sm file:font-medium file:bg-brand-50 file:text-brand-500 hover:file:bg-brand-100 border border-gray-200 rounded-xl cursor-pointer transition-all duration-200'
+                                    />
+                                </div>
+                            </div>
+
+                            {/* Submit */}
+                            {loading ? (
+                                <button disabled className='w-full bg-gray-200 text-gray-400 py-3 rounded-xl flex justify-center items-center gap-2'>
+                                    <Loader2 className='h-4 w-4 animate-spin' /> Creating account...
+                                </button>
+                            ) : (
+                                <button type="submit" className='btn-primary w-full bg-brand-500 text-white py-3 rounded-xl font-semibold hover:bg-brand-600 transition-all duration-200'>
+                                    Create Account
+                                </button>
+                            )}
+                        </form>
+
+                        <p className='text-sm text-center mt-6 text-gray-500'>
+                            Already have an account? <Link to="/login" className='text-brand-500 font-semibold hover:text-brand-600 transition-colors'>Sign In</Link>
+                        </p>
                     </div>
-                    {
-                        loading ? <button disabled className='w-full bg-gray-400 text-white p-2 rounded-md mt-4 flex justify-center items-center gap-2' > <Loader2 className='mr-2 h-4 w-4 animate-spin' /> Please wait </button> : <button type="submit" className='w-full bg-[#6A38C2] text-white p-2 rounded-md mt-4 hover:bg-[#5b30a6] transition-colors'>Signup</button>
-                    }
-                    <span className='text-sm block text-center mt-2'>Already have an account? <Link to="/login" className='text-blue-600'>Login</Link></span>
-                </form>
+                </div>
             </div>
         </div>
     )

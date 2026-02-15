@@ -4,8 +4,10 @@ import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import api from '../../services/api';
 import { Loader2 } from 'lucide-react';
+import useGetAllCompanies from '../../hooks/useGetAllCompanies';
 
 const PostJob = () => {
+    useGetAllCompanies();
     const [input, setInput] = useState({
         title: "",
         description: "",
@@ -105,23 +107,33 @@ const PostJob = () => {
                         </div>
                         <div>
                             <label className='font-bold'>Job Type</label>
-                            <input
-                                type="text"
+                            <select
                                 name="jobType"
                                 value={input.jobType}
                                 onChange={changeEventHandler}
-                                className='w-full border border-gray-200 p-2 rounded my-1 focus:outline-none focus:ring-1 focus:ring-blue-500'
-                            />
+                                className='w-full border border-gray-200 p-2 rounded my-1 bg-white focus:outline-none focus:ring-1 focus:ring-blue-500'
+                            >
+                                <option value="" disabled>Select Job Type</option>
+                                <option value="Full-time">Full-time</option>
+                                <option value="Part-time">Part-time</option>
+                                <option value="Contract">Contract</option>
+                                <option value="Internship">Internship</option>
+                                <option value="Freelance">Freelance</option>
+                            </select>
                         </div>
                         <div>
                             <label className='font-bold'>Experience Level</label>
-                            <input
-                                type="text"
+                            <select
                                 name="experience"
                                 value={input.experience}
                                 onChange={changeEventHandler}
-                                className='w-full border border-gray-200 p-2 rounded my-1 focus:outline-none focus:ring-1 focus:ring-blue-500'
-                            />
+                                className='w-full border border-gray-200 p-2 rounded my-1 bg-white focus:outline-none focus:ring-1 focus:ring-blue-500'
+                            >
+                                <option value="" disabled>Select Experience</option>
+                                <option value="Entry Level">Entry Level</option>
+                                <option value="Mid Level">Mid Level</option>
+                                <option value="Senior Level">Senior Level</option>
+                            </select>
                         </div>
                         <div>
                             <label className='font-bold'>No of Position</label>

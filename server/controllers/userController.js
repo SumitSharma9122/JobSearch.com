@@ -99,7 +99,7 @@ exports.login = async (req, res) => {
             profile: user.profile
         }
 
-        return res.status(200).cookie("token", token, { maxAge: 1 * 24 * 60 * 60 * 1000, httpsOnly: true, sameSite: 'strict' }).json({
+        return res.status(200).cookie("token", token, { maxAge: 1 * 24 * 60 * 60 * 1000, httpOnly: true, sameSite: 'strict' }).json({
             message: `Welcome back ${user.name}`,
             user,
             success: true
@@ -147,8 +147,13 @@ exports.updateProfile = async (req, res) => {
         if (email) user.email = email;
         if (bio) user.profile.bio = bio;
         if (skills) user.profile.skills = skillsArray;
-
-        // resume comes later here...
+        // Resume upload handling
+        if (file) {
+            // Store as base64 data URI (works without cloud storage)
+            const resumeDataUri = `data:${file.mimetype};base64,${file.buffer.toString('base64')}`;
+            user.profile.resume = resumeDataUri;
+            user.profile.resumeOriginalName = file.originalname;
+        }
 
         await user.save();
 
