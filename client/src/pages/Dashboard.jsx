@@ -30,7 +30,7 @@ const Dashboard = () => {
                 <div className='bg-gray-50 min-h-screen'>
                     <div className='max-w-7xl mx-auto py-6 px-4'>
                         <div className='bg-white rounded-xl p-8 shadow-sm border border-gray-100 text-center'>
-                            <h1 className='text-2xl font-bold mb-2'>Welcome back, {user.fullname}!</h1>
+                            <h1 className='text-2xl font-bold mb-2'>Welcome back, {user.name || user.fullname}!</h1>
                             <p className='text-gray-500 mb-6'>Manage your job postings and applicants</p>
                             <div className='flex gap-4 justify-center'>
                                 <Link to="/admin/companies" className='bg-[#6A38C2] text-white px-6 py-3 rounded-lg hover:bg-[#5b30a6] transition-colors font-medium'>Manage Companies</Link>
@@ -73,7 +73,7 @@ const Dashboard = () => {
                                         80%
                                     </div>
                                 </div>
-                                <h2 className='font-bold text-base'>{user?.fullname}</h2>
+                                <h2 className='font-bold text-base'>{user?.name || user?.fullname}</h2>
                                 <p className='text-xs text-gray-500 mt-0.5'>{user?.profile?.bio || "Add headline"}</p>
                                 <p className='text-[11px] text-gray-400 mt-1'>Last updated 2d ago</p>
                                 <Link to="/profile" className='mt-3 text-blue-600 text-sm font-semibold hover:underline'>View profile</Link>
@@ -143,8 +143,8 @@ const Dashboard = () => {
                                         key={tab.key}
                                         onClick={() => setActiveTab(tab.key)}
                                         className={`px-4 py-2.5 text-sm font-medium transition-colors relative ${activeTab === tab.key
-                                                ? 'text-blue-600'
-                                                : 'text-gray-500 hover:text-gray-700'
+                                            ? 'text-blue-600'
+                                            : 'text-gray-500 hover:text-gray-700'
                                             }`}
                                     >
                                         {tab.label}
@@ -163,7 +163,11 @@ const Dashboard = () => {
                                                 <div className='flex justify-between items-start mb-2'>
                                                     <div className='flex items-center gap-3'>
                                                         <div className='w-10 h-10 rounded-lg border border-gray-200 flex items-center justify-center p-1 bg-white'>
-                                                            <img src={job?.company?.logo || "https://png.pngtree.com/png-vector/20220513/ourmid/pngtree-hand-drawn-doodle-start-up-logo-png-image_4590932.png"} alt="logo" className='w-full h-full object-contain' />
+                                                            {job?.company?.logo ? (
+                                                                <img src={job.company.logo} alt="logo" className='w-full h-full object-contain' />
+                                                            ) : (
+                                                                <span className='text-sm font-bold text-brand-500'>{job?.company?.name?.charAt(0) || 'C'}</span>
+                                                            )}
                                                         </div>
                                                         <div>
                                                             <h3 className='font-semibold text-sm'>{job?.title}</h3>

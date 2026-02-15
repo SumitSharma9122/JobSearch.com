@@ -11,6 +11,15 @@ const Job = ({ job }) => {
         return diff;
     }
 
+    // Format salary nicely
+    const formatSalary = (sal) => {
+        if (!sal) return '0';
+        const num = Number(sal);
+        if (num >= 100000) return (num / 100000).toFixed(1).replace(/\.0$/, '') + ' LPA';
+        if (num >= 1000) return (num / 1000).toFixed(0) + 'K';
+        return num + ' LPA';
+    }
+
     return (
         <div className='group bg-white p-6 rounded-2xl border border-gray-100 hover-lift relative overflow-hidden'>
             {/* Top gradient accent */}
@@ -22,18 +31,22 @@ const Job = ({ job }) => {
                     <Clock size={14} />
                     <p className='text-xs'>{daysAgo(job?.createdAt) === 0 ? "Today" : `${daysAgo(job?.createdAt)} days ago`}</p>
                 </div>
-                <button onClick={() => setSaved(!saved)} className={`p-2 rounded-full transition-all duration-200 ${saved ? 'bg-brand-50 text-brand-500' : 'bg-gray-50 text-gray-400 hover:bg-gray-100'}`}>
+                <button onClick={(e) => { e.stopPropagation(); setSaved(!saved); }} className={`p-2 rounded-full transition-all duration-200 ${saved ? 'bg-brand-50 text-brand-500' : 'bg-gray-50 text-gray-400 hover:bg-gray-100'}`}>
                     {saved ? <BookmarkCheck size={18} /> : <Bookmark size={18} />}
                 </button>
             </div>
 
             {/* Company */}
             <div className='flex items-center gap-3 mt-3'>
-                <div className='w-12 h-12 rounded-xl bg-gradient-to-br from-gray-50 to-white border border-gray-100 flex items-center justify-center p-2 group-hover:scale-105 transition-transform'>
-                    <img src={job?.company?.logo || "https://png.pngtree.com/png-vector/20220513/ourmid/pngtree-hand-drawn-doodle-start-up-logo-png-image_4590932.png"} alt="logo" className='w-full h-full object-contain' />
+                <div className='w-12 h-12 rounded-xl bg-gradient-to-br from-brand-50 to-blue-50 border border-gray-100 flex items-center justify-center p-2 group-hover:scale-105 transition-transform'>
+                    {job?.company?.logo ? (
+                        <img src={job.company.logo} alt="logo" className='w-full h-full object-contain' />
+                    ) : (
+                        <span className='text-lg font-bold text-brand-500'>{job?.company?.name?.charAt(0) || 'C'}</span>
+                    )}
                 </div>
                 <div>
-                    <h3 className='font-semibold text-gray-800 group-hover:text-brand-500 transition-colors'>{job?.company?.name}</h3>
+                    <h3 className='font-semibold text-gray-800 group-hover:text-brand-500 transition-colors text-sm'>{job?.company?.name}</h3>
                     <p className='text-xs text-gray-400 flex items-center gap-1'><MapPin size={12} /> {job?.location || "India"}</p>
                 </div>
             </div>
@@ -49,23 +62,25 @@ const Job = ({ job }) => {
                 <span className='tag-pill bg-blue-50 text-blue-600 border border-blue-100'>{job?.position || 1} Positions</span>
                 <span className='tag-pill bg-emerald-50 text-emerald-600 border border-emerald-100'>{job?.jobType || "Full-time"}</span>
                 <span className='tag-pill bg-amber-50 text-amber-600 border border-amber-100 flex items-center gap-1'>
-                    <IndianRupee size={11} /> {job?.salary || 0} LPA
+                    <IndianRupee size={11} /> {formatSalary(job?.salary)}
                 </span>
             </div>
 
             {/* Skills */}
-            <div className='flex items-center gap-2 mt-3 overflow-x-auto no-scrollbar'>
-                {(job?.requirements || ["React", "Node.js", "MongoDB"]).slice(0, 4).map((skill, i) => (
-                    <span key={i} className='bg-gray-100 text-gray-500 px-2.5 py-0.5 rounded text-[10px] whitespace-nowrap'>{skill}</span>
-                ))}
-            </div>
+            {job?.requirements && job.requirements.length > 0 && job.requirements[0] !== '' && (
+                <div className='flex items-center gap-2 mt-3 overflow-x-auto no-scrollbar'>
+                    {job.requirements.slice(0, 4).map((skill, i) => (
+                        <span key={i} className='bg-gray-100 text-gray-500 px-2.5 py-0.5 rounded text-[10px] whitespace-nowrap'>{skill}</span>
+                    ))}
+                </div>
+            )}
 
             {/* Actions */}
             <div className='flex items-center gap-3 mt-5 pt-4 border-t border-gray-50'>
                 <button onClick={() => navigate(`/description/${job?._id}`)} className='flex-1 py-2.5 rounded-xl text-sm font-medium border-2 border-brand-500 text-brand-500 hover:bg-brand-50 transition-all duration-200 flex items-center justify-center gap-1'>
                     View Details <ArrowRight size={14} />
                 </button>
-                <button onClick={() => setSaved(!saved)} className='flex-1 btn-primary py-2.5 rounded-xl text-sm font-medium bg-brand-500 text-white hover:bg-brand-600 transition-all'>
+                <button onClick={(e) => { e.stopPropagation(); setSaved(!saved); }} className='flex-1 btn-primary py-2.5 rounded-xl text-sm font-medium bg-brand-500 text-white hover:bg-brand-600 transition-all'>
                     {saved ? "Saved ✓" : "Save Job"}
                 </button>
             </div>

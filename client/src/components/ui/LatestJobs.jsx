@@ -4,6 +4,15 @@ import { useNavigate } from 'react-router-dom'
 import { MapPin, IndianRupee, Clock, ArrowRight } from 'lucide-react'
 import useGetAllJobs from '../../hooks/useGetAllJobs'
 
+// Format salary nicely
+const formatSalary = (sal) => {
+    if (!sal) return '0';
+    const num = Number(sal);
+    if (num >= 100000) return (num / 100000).toFixed(1).replace(/\.0$/, '') + ' LPA';
+    if (num >= 1000) return (num / 1000).toFixed(0) + 'K';
+    return num + ' LPA';
+}
+
 const LatestJobCards = ({ job }) => {
     const navigate = useNavigate();
     const daysAgo = Math.floor((Date.now() - new Date(job?.createdAt)) / (1000 * 60 * 60 * 24));
@@ -19,11 +28,11 @@ const LatestJobCards = ({ job }) => {
             <div className='flex items-start justify-between'>
                 <div className='flex items-center gap-3'>
                     <div className='w-12 h-12 rounded-xl bg-gradient-to-br from-brand-50 to-purple-50 border border-brand-100 flex items-center justify-center p-2 group-hover:scale-105 transition-transform'>
-                        <img
-                            src={job?.company?.logo || "https://png.pngtree.com/png-vector/20220513/ourmid/pngtree-hand-drawn-doodle-start-up-logo-png-image_4590932.png"}
-                            alt="logo"
-                            className='w-full h-full object-contain'
-                        />
+                        {job?.company?.logo ? (
+                            <img src={job.company.logo} alt="logo" className='w-full h-full object-contain' />
+                        ) : (
+                            <span className='text-lg font-bold text-brand-500'>{job?.company?.name?.charAt(0) || 'C'}</span>
+                        )}
                     </div>
                     <div>
                         <h3 className='font-semibold text-gray-800 group-hover:text-brand-500 transition-colors'>{job?.company?.name || "Company"}</h3>
@@ -42,16 +51,18 @@ const LatestJobCards = ({ job }) => {
                 <span className='tag-pill bg-blue-50 text-blue-600 border border-blue-100'>{job?.position || 1} Positions</span>
                 <span className='tag-pill bg-emerald-50 text-emerald-600 border border-emerald-100'>{job?.jobType || "Full-time"}</span>
                 <span className='tag-pill bg-amber-50 text-amber-600 border border-amber-100 flex items-center gap-1'>
-                    <IndianRupee size={11} /> {job?.salary || 0} LPA
+                    <IndianRupee size={11} /> {formatSalary(job?.salary)}
                 </span>
             </div>
 
             <div className='flex items-center justify-between mt-5 pt-4 border-t border-gray-50'>
-                <div className='flex items-center gap-1.5 overflow-x-auto no-scrollbar'>
-                    {(job?.requirements || ["React", "Node.js", "MongoDB"]).slice(0, 3).map((skill, i) => (
-                        <span key={i} className='bg-gray-100 text-gray-500 px-2 py-0.5 rounded text-[10px] whitespace-nowrap'>{skill}</span>
-                    ))}
-                </div>
+                {job?.requirements && job.requirements.length > 0 && job.requirements[0] !== '' ? (
+                    <div className='flex items-center gap-1.5 overflow-x-auto no-scrollbar'>
+                        {job.requirements.slice(0, 3).map((skill, i) => (
+                            <span key={i} className='bg-gray-100 text-gray-500 px-2 py-0.5 rounded text-[10px] whitespace-nowrap'>{skill}</span>
+                        ))}
+                    </div>
+                ) : <div></div>}
                 <div className='text-brand-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center gap-1 text-sm font-medium'>
                     Apply <ArrowRight size={14} />
                 </div>
