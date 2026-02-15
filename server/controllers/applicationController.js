@@ -11,6 +11,16 @@ exports.applyJob = async (req, res) => {
                 success: false
             })
         };
+
+        // Check if user is a recruiter/employer
+        const user = await require('../models/User').findById(userId);
+        if (user.role === 'recruiter' || user.role === 'employer') {
+            return res.status(400).json({
+                message: "Recruiters cannot apply for jobs.",
+                success: false
+            });
+        }
+
         // check if user already applied for this job
         const existingApplication = await Application.findOne({ job: jobId, applicant: userId });
 

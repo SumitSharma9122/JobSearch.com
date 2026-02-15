@@ -18,7 +18,7 @@ const JobDetails = () => {
     const [applying, setApplying] = useState(false);
 
     useEffect(() => {
-        if (singleJob?.applications?.some(application => application.applicant === authUser?._id)) {
+        if (singleJob?.applications?.some(application => application.applicant?.toString() === authUser?._id?.toString() || application.applicant?._id?.toString() === authUser?._id?.toString())) {
             setIsApplied(true);
         } else {
             setIsApplied(false);
@@ -81,22 +81,24 @@ const JobDetails = () => {
                                     <p className='text-gray-500 mt-0.5'>{singleJob?.company?.name}</p>
                                 </div>
                             </div>
-                            <button
-                                onClick={isApplied ? null : applyJobHandler}
-                                disabled={isApplied || applying}
-                                className={`px-8 py-3 rounded-xl font-semibold text-sm transition-all duration-200 flex items-center gap-2 ${isApplied
-                                    ? 'bg-green-50 text-green-600 border-2 border-green-200 cursor-not-allowed'
-                                    : 'btn-primary bg-brand-500 text-white hover:bg-brand-600'
-                                    }`}
-                            >
-                                {applying ? (
-                                    <><Loader2 size={16} className='animate-spin' /> Applying...</>
-                                ) : isApplied ? (
-                                    <><CheckCircle size={16} /> Already Applied</>
-                                ) : (
-                                    'Apply Now'
-                                )}
-                            </button>
+                            {authUser?.role !== 'recruiter' && authUser?.role !== 'employer' && (
+                                <button
+                                    onClick={isApplied ? null : applyJobHandler}
+                                    disabled={isApplied || applying}
+                                    className={`px-8 py-3 rounded-xl font-semibold text-sm transition-all duration-200 flex items-center gap-2 ${isApplied
+                                        ? 'bg-green-50 text-green-600 border-2 border-green-200 cursor-not-allowed'
+                                        : 'btn-primary bg-brand-500 text-white hover:bg-brand-600'
+                                        }`}
+                                >
+                                    {applying ? (
+                                        <><Loader2 size={16} className='animate-spin' /> Applying...</>
+                                    ) : isApplied ? (
+                                        <><CheckCircle size={16} /> Already Applied</>
+                                    ) : (
+                                        'Apply Now'
+                                    )}
+                                </button>
+                            )}
                         </div>
 
                         {/* Quick Info Tags */}
