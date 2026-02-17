@@ -16,6 +16,7 @@ const JobDetails = () => {
 
     const [isApplied, setIsApplied] = useState(false);
     const [applying, setApplying] = useState(false);
+    const [applyMsg, setApplyMsg] = useState({ type: '', text: '' });
 
     useEffect(() => {
         if (singleJob?.applications?.some(application => application.applicant?.toString() === authUser?._id?.toString() || application.applicant?._id?.toString() === authUser?._id?.toString())) {
@@ -26,14 +27,22 @@ const JobDetails = () => {
     }, [singleJob, authUser]);
 
     const applyJobHandler = async () => {
+        if (!authUser) {
+            setApplyMsg({ type: 'error', text: 'Please login first to apply for this job.' });
+            return;
+        }
         try {
             setApplying(true);
+            setApplyMsg({ type: '', text: '' });
             const res = await api.get(`/application/apply/${jobId}`);
             if (res.data.success) {
                 setIsApplied(true);
+                setApplyMsg({ type: 'success', text: res.data.message || 'Applied successfully!' });
             }
         } catch (error) {
             console.log(error);
+            const msg = error?.response?.data?.message || 'Something went wrong. Please try again.';
+            setApplyMsg({ type: 'error', text: msg });
         } finally {
             setApplying(false);
         }
@@ -119,6 +128,13 @@ const JobDetails = () => {
                                 <MapPin size={12} /> {singleJob?.location}
                             </span>
                         </div>
+
+                        {/* Apply Status Message */}
+                        {applyMsg.text && (
+                            <div className={`mt-4 px-4 py-3 rounded-xl text-sm font-medium ${applyMsg.type === 'success' ? 'bg-green-50 text-green-700 border border-green-200' : 'bg-red-50 text-red-700 border border-red-200'}`}>
+                                {applyMsg.text}
+                            </div>
+                        )}
                     </div>
                 </div>
 

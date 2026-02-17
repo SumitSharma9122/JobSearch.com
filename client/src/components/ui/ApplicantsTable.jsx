@@ -9,6 +9,7 @@ const shortlistingStatus = ["Accepted", "Rejected"];
 
 const ApplicantsTable = () => {
     const { applicants } = useSelector(store => store.application);
+    const dispatch = useDispatch();
     const [updatingId, setUpdatingId] = useState(null);
 
     const statusHandler = async (status, id) => {

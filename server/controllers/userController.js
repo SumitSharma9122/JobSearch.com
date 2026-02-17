@@ -51,6 +51,7 @@ exports.register = async (req, res) => {
         });
     } catch (error) {
         console.log(error);
+        return res.status(500).json({ message: "Server error during registration.", success: false });
     }
 }
 
@@ -106,6 +107,7 @@ exports.login = async (req, res) => {
         })
     } catch (error) {
         console.log(error);
+        return res.status(500).json({ message: "Server error during login.", success: false });
     }
 }
 
@@ -118,6 +120,7 @@ exports.logout = async (req, res) => {
         })
     } catch (error) {
         console.log(error);
+        return res.status(500).json({ message: "Server error during logout.", success: false });
     }
 }
 
@@ -172,5 +175,6 @@ exports.updateProfile = async (req, res) => {
         })
     } catch (error) {
         console.log(error);
+        return res.status(500).json({ message: "Server error during profile update.", success: false });
     }
 }

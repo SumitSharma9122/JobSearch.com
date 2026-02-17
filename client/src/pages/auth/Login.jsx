@@ -13,16 +13,25 @@ const Login = () => {
         role: "",
     });
     const [showPassword, setShowPassword] = useState(false);
+    const [error, setError] = useState("");
     const { loading } = useSelector(store => store.auth);
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
     const changeEventHandler = (e) => {
         setInput({ ...input, [e.target.name]: e.target.value });
+        setError("");
     }
 
     const submitHandler = async (e) => {
         e.preventDefault();
+        setError("");
+
+        if (!input.email || !input.password || !input.role) {
+            setError("Please fill in all fields (Email, Password, and Role).");
+            return;
+        }
+
         try {
             dispatch(setLoading(true));
             const res = await api.post("/user/login", input);
@@ -32,6 +41,8 @@ const Login = () => {
             }
         } catch (error) {
             console.log(error);
+            const msg = error?.response?.data?.message || "Something went wrong. Please try again.";
+            setError(msg);
         } finally {
             dispatch(setLoading(false));
         }
@@ -106,6 +117,13 @@ const Login = () => {
                                     </label>
                                 </div>
                             </div>
+
+                            {/* Error Message */}
+                            {error && (
+                                <div className='bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-600 dark:text-red-400 text-sm px-4 py-3 rounded-xl'>
+                                    {error}
+                                </div>
+                            )}
 
                             {/* Submit */}
                             {loading ? (
